@@ -1,0 +1,7 @@
+{
+  "name": "di05_teva",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
