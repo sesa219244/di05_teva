@@ -1,0 +1,26 @@
+.mi-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mi-tabla th, .mi-tabla td {
+border: 1px solid #dddddd;
+padding: 8px;
+text-align: left;
+color: #000000;
+}
+
+.mi-tabla th {
+background-color: #f2f2f2;
+color: #000000;
+}
+
+.mi-tabla tr:nth-child(even) {
+background-color: #f2f2f2;
+color: #000000;
+}
+
+.mi-tabla tr:hover {
+background-color: #ddd;
+color: #000000;
+}
