@@ -140,15 +140,13 @@ export class HomePage implements OnInit {
     const sections = this.container.nativeElement.querySelectorAll('.seccion') as NodeListOf<HTMLElement>;
     // El total de secciones que tenemos en nuestro html
     const totalSections = sections.length;
-    //Gestionará la sección que estamos analizando
+    // Gestionará la sección que estamos analizando
     let currentSectionIndex = 0;
-    //Controlará que se hayan creado todas las imagenes antes de crear el PDF. En caso contrario imprimiría un pdf por cada sección.
+    // Controlará que se hayan creado todas las imagenes antes de crear el PDF. En caso contrario imprimiría un pdf por cada sección.
     let contSections = 0;
-    //Definimos de que height queremos que empiece a dibujar nuestro PDF.
-    let headerHeight = 55; //Altura del padding que le hemos dado al header
-    let footerHeight = 10; //Altura del padding que le hemos dado al footer
-    let currentPageHeight = headerHeight+footerHeight;
-    //let currentPageHeight = 0;
+    // Definimos de que height queremos que empiece a dibujar nuestro PDF.
+    let currentPageHeight = 55;
+
 
     while (currentSectionIndex < totalSections) {
       const section = sections[currentSectionIndex];
@@ -161,17 +159,15 @@ export class HomePage implements OnInit {
         const height = canvas.height * (width / canvas.width);
         if (currentPageHeight + height >= doc.internal.pageSize.getHeight()) {
           doc.addPage();
-          //currentPageHeight = 0;
-          currentPageHeight = headerHeight + footerHeight;
-          //this.addPageConfig(doc);
+          currentPageHeight = 55;
         }
-        //this.addPageConfig(doc);
-        doc.addImage(imageData, 'JPG', 0, currentPageHeight, width, height);
-        currentPageHeight += height;
+        doc.addImage(imageData, 'JPG', 10, currentPageHeight +10, width-20, height);
+        currentPageHeight += height +10;
         contSections++;
         if (contSections === totalSections) {
           //Al final asignamos el header y footer a todas las páginas
-          this.addPageConfig(doc);
+          this.addHeader(doc);
+          this.addFooter(doc);
           doc.save('dashboard.pdf');
         }
       });
@@ -180,28 +176,71 @@ export class HomePage implements OnInit {
     }
   }
 
-  addPageConfig(doc:jsPDF) {
+  addHeader(doc: jsPDF) {
     for (let i = 1; i <= doc.getNumberOfPages(); i++) {
-      // Añadimos la págin
+      // Añadimos la página
       doc.setPage(i);
+
+      // Calculamos el centro de la página
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Creamos un rectángulo gris como fondo del encabezado
+      doc.setFillColor('#CCCCCC'); // Color gris
+      doc.rect(5, 5, pageWidth-10, 45, 'F'); // Tamaño y posición del rectángulo
+
       // Añadimos el logotipo, sus valores y posición
       const imagen = "/assets/icon/favicon.png";
       const imgWidth = 45; // Ancho de la imagen
       const imgHeight = 45; // Alto de la imagen
-      const imgX = 5; // Posición X de la imagen
+
+      // Calculamos las coordenadas para centrar la imagen
+      const imgX = (pageWidth - imgWidth) / 2;
       const imgY = 5; // Posición Y de la imagen
+
+      // Añadimos la imagen
       doc.addImage(imagen, "JPG", imgX, imgY, imgWidth, imgHeight);
+
+      // Ponemos una línea divisoria en la cabecera
+      doc.line(5, 55, doc.internal.pageSize.width-5, 55);
+
       // Le asignamos un tamaño a las letras
-      doc.setFontSize(10);
-      doc.line(0, 55, doc.internal.pageSize.width, 55);
+      doc.setFontSize(12);
+
       // Añadimos información de la empresa
       const nombreEmpresa = "Nombre de la Empresa";
       const telefono = "Teléfono: 123-456-789";
       const direccion = "Dirección: Calle Principal, 123";
-      const texto = nombreEmpresa+'\n'+telefono+'\n'+direccion;
-      doc.text(texto, doc.internal.pageSize.width - 120, 10, {baseline:'top'});
-      // Añadimos la paginación
-      doc.text("Página "+i, doc.internal.pageSize.width - 100, doc.internal.pageSize.height - 10, {baseline:'bottom'});
+      const texto = nombreEmpresa + '\n' + telefono + '\n' + direccion;
+      doc.text(texto, 20, 20, {baseline:'middle'});
+    }
+  }
+
+  addFooter(doc: jsPDF) {
+    for (let i = 1; i <= doc.getNumberOfPages(); i++) {
+      // Añadimos la página
+      doc.setPage(i);
+
+      // Calculamos el centro de la página
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Creamos el rectángulo para el pie de página
+      const rectHeight = 20; // Altura del rectángulo
+      const rectY = pageHeight - rectHeight-5; // Coordenada Y del rectángulo
+      doc.setFillColor('#CCCCCC'); // Color gris
+      doc.rect(5, rectY, pageWidth-10, rectHeight, 'F'); // Tamaño y posición del rectángulo
+
+      // Le asignamos un tamaño a las letras
+      doc.setFontSize(8);
+
+      // Añadimos la paginación en el pie de página
+      const totalPages = doc.getNumberOfPages();
+      const footerText = `Página ${i} de ${totalPages}`;
+      doc.text(footerText, doc.internal.pageSize.width /2 -18, doc.internal.pageSize.height - 15, {baseline:'middle'});
+
+      // Ponemos una línea divisoria en el pie de pagina
+      doc.line(5, rectY-5, doc.internal.pageSize.width-5, rectY-5);
     }
   }
 }
