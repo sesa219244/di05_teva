@@ -27,7 +27,7 @@ export class ServiceService {
 
   cargarCategoria(categoria: string) {
 
-    // OPCION 1: USANDO FICHEROS
+    /* OPCION 1: USANDO FICHEROS
     if ("business" || "entertainment" || "general" || "technology" || "health" || "science" || "sports" === categoria) {
       let respuesta: Observable<RootObject> = this.apiRest.get<RootObject>("/assets/data/" + categoria + ".json");
       console.log("respuesta: "+respuesta);
@@ -39,9 +39,9 @@ export class ServiceService {
         console.error('La propiedad totalResults no está definida en la respuesta:', data);
       }
       });
-    }
+    }*/
 
-    /* OPCION 2: USANDO API REST
+    // OPCION 2: USANDO API REST
     //Realizamos la llamada api y la recogemos en un observable de tipo RootObject
     let respuesta: Observable<RootObject> = this.apiRest.get<RootObject>(this.apiUrl + "/top-headlines?country=us&category=" + categoria + "&apiKey=" + this.apiKey);
     console.log("respuesta: "+respuesta);
@@ -52,6 +52,6 @@ export class ServiceService {
       } else {
         console.error('La propiedad totalResults no está definida en la respuesta:', data);
       }
-    });*/
+    });
   }
 }

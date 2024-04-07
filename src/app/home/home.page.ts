@@ -8,6 +8,7 @@ import html2canvas from 'html2canvas';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
+
 export class HomePage implements OnInit {
 
   backgroundColorCat: string[] = [
